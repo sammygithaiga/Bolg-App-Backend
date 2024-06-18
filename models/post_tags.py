@@ -1,22 +1,22 @@
 from db import cursor, conn
 
-class PostCategories:
-    TABLE_NAME = 'post_categories'
+class PostTags:
+    TABLE_NAME = 'post_tags'
     
-    def __init__(self, post_id, category_id):
+    def __init__(self, post_id, tag_id):
         self.id = None
         self.post_id = post_id
-        self.category_id = category_id
+        self.tag_id = tag_id
     
     def save(self):
         sql = f"""
-            INSERT INTO {self.TABLE_NAME} (post_id, category_id)
+            INSERT INTO {self.TABLE_NAME} (post_id, tag_id)
             VALUES (?, ?)
         """
-        cursor.execute(sql, (self.post_id, self.category_id))
+        cursor.execute(sql, (self.post_id, self.tag_id))
         conn.commit()
         self.id = cursor.lastrowid
-        print(f"Post-Category relationship created with ID: {self.id}")
+        print(f"Post-Tag relationship created with ID: {self.id}")
     
     @classmethod
     def create_table(cls):
@@ -24,9 +24,9 @@ class PostCategories:
             CREATE TABLE IF NOT EXISTS {cls.TABLE_NAME} (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 post_id INTEGER,
-                category_id INTEGER,
+                tag_id INTEGER,
                 FOREIGN KEY (post_id) REFERENCES posts (id),
-                FOREIGN KEY (category_id) REFERENCES categories (id)
+                FOREIGN KEY (tag_id) REFERENCES tags (id)
             )
         """
         cursor.execute(sql)
@@ -36,7 +36,7 @@ class PostCategories:
     @classmethod
     def get_all(cls):
         cursor.execute(f"SELECT * FROM {cls.TABLE_NAME}")
-        post_categories = cursor.fetchall()
-        return [{"id": post_category[0], "post_id": post_category[1], "category_id": post_category[2]} for post_category in post_categories]
+        post_tags = cursor.fetchall()
+        return [{"id": post_tag[0], "post_id": post_tag[1], "tag_id": post_tag[2]} for post_tag in post_tags]
 
-PostCategories.create_table()
+PostTags.create_table()
